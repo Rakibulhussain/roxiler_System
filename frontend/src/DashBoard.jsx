@@ -1,0 +1,12 @@
+import Navbar from "./components/Navbar";
+import { CountUser } from "./components/CountUser";
+
+export default function DashBoard() {
+  return (
+    <div>
+      <Navbar />
+      <CountUser/>
+      <h1>Dashboard Loaded Successfully</h1>
+    </div>
+  );
+}
