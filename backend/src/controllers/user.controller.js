@@ -1,7 +1,7 @@
 const User = require("../models/user.model");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-
+const { Op } = require("sequelize");
 // ================= REGISTER =================
 exports.register = async (req, res) => {
   try {
@@ -95,6 +95,31 @@ exports.login = async (req, res) => {
 };
 
 
+
+exports.getAdminAndNormalUsers = async (req, res) => {
+  try {
+    const users = await User.findAll({
+      attributes: ["id", "name", "email", "address", "role"],
+      where: {
+        role: ["ADMIN", "USER"] // exclude OWNER
+      }
+    });
+
+    return res.status(200).json({
+      success: true,
+      data: users
+    });
+
+  } catch (error) {
+    console.error("Error fetching users:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Failed to fetch users",
+      error: error.message
+    });
+  }
+};
+
 // ================= GET ALL USERS =================
 exports.getAllUsers = async (req, res) => {
   try {
@@ -106,5 +131,51 @@ exports.getAllUsers = async (req, res) => {
 
   } catch (error) {
     res.status(500).json({ message: error.message });
+  }
+};
+
+
+
+
+
+exports.searchUsers = async (req, res) => {
+  try {
+    const { search } = req.query;
+
+    let whereCondition = {
+      role: {
+        [Op.in]: ["ADMIN", "USER"] // exclude OWNER
+      }
+    };
+
+    if (search) {
+      whereCondition = {
+        ...whereCondition,
+        [Op.or]: [
+          { name: { [Op.like]: `%${search}%` } },
+          { email: { [Op.like]: `%${search}%` } },
+          { address: { [Op.like]: `%${search}%` } },
+          { role: { [Op.like]: `%${search}%` } }
+        ]
+      };
+    }
+
+    const users = await User.findAll({
+      attributes: ["id", "name", "email", "address", "role"],
+      where: whereCondition
+    });
+
+    return res.status(200).json({
+      success: true,
+      data: users
+    });
+
+  } catch (error) {
+    console.error("Search error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Search failed",
+      error: error.message
+    });
   }
 };

@@ -5,6 +5,7 @@ export const CountUser = () => {
   const [stats, setStats] = useState({
     totalUsers: 0,
     totalStores: 0,
+    totalRatings: 0
   });
 
   useEffect(() => {
@@ -21,7 +22,8 @@ export const CountUser = () => {
           }
         );
 
-        setStats(res.data);
+        // ✅ FIXED
+        setStats(res.data.data);
 
       } catch (error) {
         console.error("Error fetching stats:", error);
@@ -41,6 +43,11 @@ export const CountUser = () => {
       <div style={styles.card}>
         <h3>Total Stores</h3>
         <h1>{stats.totalStores}</h1>
+      </div>
+
+      <div style={styles.card}>
+        <h3>Total Ratings</h3>
+        <h1>{stats.totalRatings}</h1>
       </div>
     </div>
   );

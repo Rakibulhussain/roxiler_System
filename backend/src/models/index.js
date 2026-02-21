@@ -22,6 +22,9 @@ Store.hasMany(Rating, {
 Rating.belongsTo(Store, {
   foreignKey: "storeId",
 });
+Store.belongsTo(User, { foreignKey: "ownerId" });
+Rating.belongsTo(Store, { foreignKey: "storeId" });
+Store.hasMany(Rating, { foreignKey: "storeId" });
 
 module.exports = {
   User,

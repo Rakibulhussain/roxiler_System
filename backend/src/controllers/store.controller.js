@@ -67,3 +67,48 @@ exports.getAllStores = async (req, res) => {
     });
   }
 };
+
+
+
+
+
+exports.getAllStoresWithDetails = async (req, res) => {
+  try {
+    const stores = await Store.findAll({
+      attributes: [
+        "id",
+        "store_name",  // ✅ fixed
+        "address",
+        [
+          Sequelize.fn("AVG", Sequelize.col("Ratings.rating")),
+          "avg_rating"
+        ]
+      ],
+      include: [
+        {
+          model: User,
+          as: "owner",   // ✅ must match association
+          attributes: ["name", "email"]
+        },
+        {
+          model: Rating,
+          attributes: []
+        }
+      ],
+      group: ["Store.id", "owner.id"]
+    });
+
+    return res.status(200).json({
+      success: true,
+      data: stores
+    });
+
+  } catch (error) {
+    console.error("Error fetching stores:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Failed to fetch store details",
+      error: error.message
+    });
+  }
+};

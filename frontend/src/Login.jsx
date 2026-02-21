@@ -10,6 +10,9 @@ export function Login() {
     password: ""
   });
 
+  const [loading, setLoading] = useState(false);
+
+  // Handle input change
   const handleChange = (e) => {
     setLoginData({
       ...loginData,
@@ -17,8 +20,13 @@ export function Login() {
     });
   };
 
-  const handleLogin = async () => {
+  // Handle login
+  const handleLogin = async (e) => {
+    e.preventDefault();
+
     try {
+      setLoading(true);
+
       const res = await axios.post(
         "http://localhost:5000/api/users/login",
         loginData
@@ -26,16 +34,33 @@ export function Login() {
 
       console.log(res.data);
 
+      // ✅ Save token
       if (res.data.token) {
         localStorage.setItem("token", res.data.token);
       }
 
-      // ✅ Redirect to dashboard route "/"
-      navigate("/");
+      // ✅ Get role from backend
+      const role = res.data?.user?.role;
+
+      // ✅ Save role (optional but useful)
+      localStorage.setItem("role", role);
+
+      // ✅ Role Based Navigation
+    if (role === "ADMIN") {
+  navigate("/admindashboard");
+} 
+else if (role === "OWNER") {
+  navigate("/ownerDashboard");
+} 
+else {
+  navigate("/normalUserdashboard");
+}
 
     } catch (err) {
       console.error(err);
       alert(err.response?.data?.message || "Login Failed");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -43,24 +68,33 @@ export function Login() {
     <div className="container">
       <h1>Login Page</h1>
 
-      <input
-        name="email"
-        placeholder="Email"
-        onChange={handleChange}
-      />
+      <form onSubmit={handleLogin}>
+        <input
+          type="email"
+          name="email"
+          placeholder="Email"
+          value={loginData.email}
+          onChange={handleChange}
+          required
+        />
 
-      <input
-        name="password"
-        type="password"
-        placeholder="Password"
-        onChange={handleChange}
-      />
+        <input
+          type="password"
+          name="password"
+          placeholder="Password"
+          value={loginData.password}
+          onChange={handleChange}
+          required
+        />
 
-      <button onClick={handleLogin}>Login</button>
+        <button type="submit" disabled={loading}>
+          {loading ? "Logging in..." : "Login"}
+        </button>
+      </form>
 
       <p>
-        Register,{" "}
-        <Link to="/register">Register here</Link>
+        Not registered?{" "}
+        <Link to="/">Register here</Link>
       </p>
     </div>
   );

@@ -8,16 +8,21 @@ require("./src/models/user.model");
 const PORT = process.env.PORT || 5000;
 
 const startServer = async () => {
-  await connectDB();
+  try {
+    await connectDB();
 
-  // This creates tables automatically
-  await sequelize.sync({ alter: true });
+    // ✅ DO NOT USE alter: true
+    await sequelize.sync(); 
 
-  console.log("All models synced");
+    console.log("All models synced");
 
-  app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-  });
+    app.listen(PORT, () => {
+      console.log(`Server running on port ${PORT}`);
+    });
+
+  } catch (error) {
+    console.error("Server start error:", error);
+  }
 };
 
 startServer();

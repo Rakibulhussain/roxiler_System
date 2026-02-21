@@ -13,7 +13,12 @@ router.post(
 );
 router.get("/all",storeController.getAllStores)
 
-
+router.get(
+  "/stores-with-details",
+  verifyToken, 
+  isAdmin,
+  storeController.getAllStoresWithDetails
+);
 
 
 module.exports = router;
