@@ -1,5 +1,4 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import "./App.css";
 
 import { Login } from "./Login";
 import { Register } from "./Register";
@@ -127,6 +126,8 @@ function App() {
           }
         />
 
+        
+     
 
         {/* Unknown Route */}
         <Route path="*" element={<Navigate to="/" replace />} />

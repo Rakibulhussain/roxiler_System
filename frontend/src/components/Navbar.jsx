@@ -21,14 +21,12 @@ export default function Navbar() {
       const res = await axios.get(
         `http://localhost:5000/api/users/search?search=${search}`,
         {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers: { Authorization: `Bearer ${token}` }
         }
       );
 
       navigate("/adminAndnormalUserList", {
-        state: { searchResults: res.data.data },
+        state: { searchResults: res.data.data }
       });
 
     } catch (error) {
@@ -38,20 +36,22 @@ export default function Navbar() {
 
   return (
     <nav style={styles.nav}>
-      <div>
+      {/* LEFT SIDE */}
+      <div style={styles.leftSection}>
         <Link to="/" style={styles.link}>Dashboard</Link>
         <Link to="/createNewUser" style={styles.link}>Create User</Link>
         <Link to="/createStore" style={styles.link}>Create Store</Link>
         <Link to="/storeList" style={styles.link}>Store List</Link>
         <Link to="/adminAndnormalUserList" style={styles.link}>
-          Admin & Normal User List
+          Users
         </Link>
       </div>
 
+      {/* RIGHT SIDE */}
       <div style={styles.rightSection}>
         <input
           type="text"
-          placeholder="Search..."
+          placeholder="Search users..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           style={styles.input}
@@ -61,7 +61,7 @@ export default function Navbar() {
           Search
         </button>
 
-        <button onClick={handleLogout} style={styles.button}>
+        <button onClick={handleLogout} style={styles.logoutBtn}>
           Logout
         </button>
       </div>
@@ -72,13 +72,22 @@ export default function Navbar() {
 const styles = {
   nav: {
     width: "100%",
-    padding: "12px 25px",
-    background: "#222",
-    color: "white",
+    padding: "12px 30px",
+    background: "#1f1f1f",
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
-    boxSizing: "border-box"
+    boxSizing: "border-box",
+    position: "sticky",
+    top: 0,
+    zIndex: 1000
+  },
+
+  leftSection: {
+    display: "flex",
+    alignItems: "center",
+    gap: "18px",
+    flexWrap: "wrap"
   },
 
   rightSection: {
@@ -88,36 +97,39 @@ const styles = {
   },
 
   link: {
-    marginRight: "18px",
     color: "white",
-    textDecoration: "none"
+    textDecoration: "none",
+    fontSize: "14px",
+    fontWeight: 500
   },
 
   input: {
-    padding: "6px 8px",
-    width: "180px",
-    borderRadius: "4px",
-    border: "none",
-    fontSize: "14px"
+    padding: "7px 10px",
+    width: "200px",
+    borderRadius: "6px",
+    border: "1px solid #444",
+    background: "#2a2a2a",
+    color: "white",
+    outline: "none"
   },
 
   searchBtn: {
-    padding: "5px 10px",
-    fontSize: "13px",
+    padding: "7px 14px",
     background: "#4a90e2",
     color: "white",
     border: "none",
-    borderRadius: "4px",
-    cursor: "pointer"
+    borderRadius: "6px",
+    cursor: "pointer",
+    fontSize: "13px"
   },
 
-  button: {
-    padding: "5px 10px",
-    fontSize: "13px",
+  logoutBtn: {
+    padding: "7px 14px",
     background: "#e63946",
     color: "white",
     border: "none",
-    borderRadius: "4px",
-    cursor: "pointer"
+    borderRadius: "6px",
+    cursor: "pointer",
+    fontSize: "13px"
   }
 };
