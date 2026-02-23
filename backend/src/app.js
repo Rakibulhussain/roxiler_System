@@ -18,7 +18,6 @@ app.use("/api/admin", require("./routes/admin.routes"))
 app.use("/api/users", require("./routes/user.routes"));
 app.use("/api/store", require("./routes/store.routes"));
 app.use("/api/dashboard", require("./routes/dashboard.routes"));
-
 app.use("/api/rating", require("./routes/rating.router"));
 
 

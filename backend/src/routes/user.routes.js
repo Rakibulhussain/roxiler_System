@@ -8,6 +8,7 @@ router.post("/login", userController.login);
 
 router.get("/", userController.getAllUsers);
 
+
 // ✅ FIXED
 router.get(
   "/admin_normal_user",
@@ -22,4 +23,8 @@ router.get(
   userController.searchUsers
 );
 
+// Get user by ID
+router.get("/me", verifyToken, userController.getLoggedInUser);
+// Update password
+router.put("/change-password", verifyToken, userController.changeMyPassword);
 module.exports = router;

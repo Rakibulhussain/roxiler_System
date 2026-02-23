@@ -112,3 +112,61 @@ exports.getAllStoresWithDetails = async (req, res) => {
     });
   }
 };
+
+
+
+exports.getStoreInfo = async (req, res) => {
+  try {
+    const { storeId } = req.params;
+
+    // 🔹 Get store with owner info
+    const store = await Store.findOne({
+      where: { id: storeId },
+      include: [
+        {
+          model: User,
+          as: "owner",
+          attributes: ["id", "name", "email"],
+        },
+      ],
+    });
+
+    if (!store) {
+      return res.status(404).json({
+        success: false,
+        message: "Store not found",
+      });
+    }
+
+    // 🔹 Calculate average rating
+    const ratingStats = await Rating.findOne({
+      attributes: [
+        [Sequelize.fn("AVG", Sequelize.col("rating")), "averageRating"],
+        [Sequelize.fn("COUNT", Sequelize.col("id")), "totalRatings"],
+      ],
+      where: { storeId },
+      raw: true,
+    });
+
+    return res.status(200).json({
+      success: true,
+      store: {
+        id: store.id,
+        name: store.store_name,
+        address: store.address,
+        owner: store.owner,
+        averageRating: ratingStats.averageRating
+          ? Number(ratingStats.averageRating).toFixed(2)
+          : "0.00",
+        totalRatings: ratingStats.totalRatings || 0,
+      },
+    });
+
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Failed to fetch store info",
+      error: error.message,
+    });
+  }
+};

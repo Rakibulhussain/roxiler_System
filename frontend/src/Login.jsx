@@ -11,8 +11,8 @@ export function Login() {
   });
 
   const [loading, setLoading] = useState(false);
+  const [hover, setHover] = useState(false);
 
-  // Handle input change
   const handleChange = (e) => {
     setLoginData({
       ...loginData,
@@ -20,7 +20,6 @@ export function Login() {
     });
   };
 
-  // Handle login
   const handleLogin = async (e) => {
     e.preventDefault();
 
@@ -32,29 +31,20 @@ export function Login() {
         loginData
       );
 
-      console.log(res.data);
-
-      // ✅ Save token
       if (res.data.token) {
         localStorage.setItem("token", res.data.token);
       }
 
-      // ✅ Get role from backend
       const role = res.data?.user?.role;
-
-      // ✅ Save role (optional but useful)
       localStorage.setItem("role", role);
 
-      // ✅ Role Based Navigation
-    if (role === "ADMIN") {
-  navigate("/admindashboard");
-} 
-else if (role === "OWNER") {
-  navigate("/ownerDashboard");
-} 
-else {
-  navigate("/normalUserdashboard");
-}
+      if (role === "ADMIN") {
+        navigate("/admindashboard");
+      } else if (role === "OWNER") {
+        navigate("/ownerDashboard");
+      } else {
+        navigate("/normalUserdashboard");
+      }
 
     } catch (err) {
       console.error(err);
@@ -65,37 +55,117 @@ else {
   };
 
   return (
-    <div className="container">
-      <h1>Login Page</h1>
+    <div style={style.page}>
+      <div style={style.container}>
+        <h1 style={style.title}>Login</h1>
 
-      <form onSubmit={handleLogin}>
-        <input
-          type="email"
-          name="email"
-          placeholder="Email"
-          value={loginData.email}
-          onChange={handleChange}
-          required
-        />
+        <form onSubmit={handleLogin} style={style.form}>
+          <input
+            style={style.input}
+            type="email"
+            name="email"
+            placeholder="Email"
+            value={loginData.email}
+            onChange={handleChange}
+            required
+          />
 
-        <input
-          type="password"
-          name="password"
-          placeholder="Password"
-          value={loginData.password}
-          onChange={handleChange}
-          required
-        />
+          <input
+            style={style.input}
+            type="password"
+            name="password"
+            placeholder="Password"
+            value={loginData.password}
+            onChange={handleChange}
+            required
+          />
 
-        <button type="submit" disabled={loading}>
-          {loading ? "Logging in..." : "Login"}
-        </button>
-      </form>
+          <button
+            type="submit"
+            disabled={loading}
+            style={{
+              ...style.button,
+              backgroundColor: loading
+                ? "#a5b4fc"
+                : hover
+                ? "#4338ca"
+                : "#4f46e5"
+            }}
+            onMouseEnter={() => setHover(true)}
+            onMouseLeave={() => setHover(false)}
+          >
+            {loading ? "Logging in..." : "Login"}
+          </button>
+        </form>
 
-      <p>
-        Not registered?{" "}
-        <Link to="/">Register here</Link>
-      </p>
+        <p style={style.text}>
+          Not registered?{" "}
+          <Link to="/register" style={style.link}>
+            Register here
+          </Link>
+        </p>
+      </div>
     </div>
   );
 }
+
+const style = {
+  page: {
+    height: "100vh",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#f3f4f6",
+    fontFamily: "Arial, sans-serif"
+  },
+
+  container: {
+    width: "350px",
+    padding: "30px",
+    borderRadius: "10px",
+    backgroundColor: "#ffffff",
+    boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
+    display: "flex",
+    flexDirection: "column",
+    gap: "20px"
+  },
+
+  title: {
+    textAlign: "center",
+    margin: 0
+  },
+
+  form: {
+    display: "flex",
+    flexDirection: "column",
+    gap: "15px"
+  },
+
+  input: {
+    padding: "10px",
+    borderRadius: "6px",
+    border: "1px solid #ccc",
+    fontSize: "14px"
+  },
+
+  button: {
+    padding: "10px",
+    borderRadius: "6px",
+    border: "none",
+    color: "white",
+    fontSize: "15px",
+    cursor: "pointer",
+    transition: "0.3s"
+  },
+
+  text: {
+    fontSize: "14px",
+    textAlign: "center"
+  },
+
+  link: {
+    color: "#4f46e5",
+    textDecoration: "none",
+    fontWeight: "bold"
+  }
+};

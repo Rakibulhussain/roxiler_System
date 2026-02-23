@@ -1,14 +1,22 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-
-import { Login } from "./Login";
 import { Register } from "./Register";
-import DashBoard from "./DashBoard";
+import { Login } from "./Login";
+
+import DashBoard from "./admin/DashBoard";
+import {OwnerDashboard }from "./owner/OwnerDashboard";
+import { NormalUserDashboard } from "./user/NormalUserDashboard";
+
 import CreateUser from "./components/CreateUser";
 import NewStore from "./components/NewStore";
-import { NormalUserDashboard } from "./components/NormalUserDashboard";
-import { OwnerDashboard } from "./components/OwnerDashboard";
 import { StoreList } from "./components/StoreList";
 import { AdminAndNormalUser } from "./components/AdminAndNormalUser";
+import UserProfile from "./user/UserProfile";
+import { RegisterStore } from "./user/RegisterStore";
+import { OwnerProfile } from "./owner/OwnerProfile";
+import { StoreInfo } from "./owner/StoreInfo";
+
+
+/* ---------------- Protected Route ---------------- */
 
 function ProtectedRoute({ children }) {
   const token = localStorage.getItem("token");
@@ -20,27 +28,41 @@ function ProtectedRoute({ children }) {
   return children;
 }
 
+/* ---------------- App Component ---------------- */
+
 function App() {
   const token = localStorage.getItem("token");
   const role = localStorage.getItem("role");
+ 
 
   return (
     <BrowserRouter>
       <Routes>
 
-        {/* Default Route (Register Page) */}
-        <Route
-          path="/"
-          element={
-            token ? <Navigate to="/redirect" replace /> : <Register />
-          }
-        />
+        {/* Default Route → Always go to Login */}
+        <Route path="/" element={<Navigate to="/login" replace />} />
 
-        {/* Login Page */}
+        {/* Login Route */}
         <Route
           path="/login"
           element={
-            token ? <Navigate to="/redirect" replace /> : <Login />
+            token && role ? (
+              <Navigate to="/redirect" replace />
+            ) : (
+              <Login />
+            )
+          }
+        />
+
+        {/* Register Route */}
+        <Route
+          path="/register"
+          element={
+            token && role ? (
+              <Navigate to="/redirect" replace />
+            ) : (
+              <Register />
+            )
           }
         />
 
@@ -48,17 +70,22 @@ function App() {
         <Route
           path="/redirect"
           element={
-            role === "ADMIN" ? (
+            !token ? (
+              <Navigate to="/login" replace />
+            ) : role === "ADMIN" ? (
               <Navigate to="/admindashboard" replace />
             ) : role === "OWNER" ? (
               <Navigate to="/ownerDashboard" replace />
-            ) : (
+            ) : role === "USER" ? (
               <Navigate to="/normalUserdashboard" replace />
+            ) : (
+              <Navigate to="/login" replace />
             )
           }
         />
 
-        {/* Admin Dashboard */}
+        {/* ---------------- Dashboards ---------------- */}
+
         <Route
           path="/admindashboard"
           element={
@@ -68,7 +95,6 @@ function App() {
           }
         />
 
-        {/* Owner Dashboard */}
         <Route
           path="/ownerDashboard"
           element={
@@ -78,7 +104,6 @@ function App() {
           }
         />
 
-        {/* Normal User Dashboard */}
         <Route
           path="/normalUserdashboard"
           element={
@@ -88,7 +113,8 @@ function App() {
           }
         />
 
-        {/* Create User */}
+        {/* ---------------- Other Protected Routes ---------------- */}
+
         <Route
           path="/createNewUser"
           element={
@@ -98,7 +124,6 @@ function App() {
           }
         />
 
-        {/* Create Store */}
         <Route
           path="/createStore"
           element={
@@ -125,12 +150,48 @@ function App() {
             </ProtectedRoute>
           }
         />
+    
+    <Route
+          path="/user/profile"
+          element={
+            <ProtectedRoute>
+              <UserProfile />
+            </ProtectedRoute>
+          }
+        />
+       
 
-        
-     
+       <Route
+       path="/stores"
+       element={
+        <ProtectedRoute>
+          <RegisterStore />
+        </ProtectedRoute>
+       }
+       />
+
+       <Route
+       path="/owner/profile"
+       element={
+        <ProtectedRoute>
+          <OwnerProfile />
+        </ProtectedRoute>
+       }
+       />
+
+       <Route
+       path="/storeinfo"
+        element={
+          <ProtectedRoute>
+            <StoreInfo />
+          </ProtectedRoute>
+        }
+       />
+   
+      
 
         {/* Unknown Route */}
-        <Route path="*" element={<Navigate to="/" replace />} />
+        <Route path="*" element={<Navigate to="/login" replace />} />
 
       </Routes>
     </BrowserRouter>

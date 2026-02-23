@@ -1,7 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import axios from "axios";
-import "../App.css";
 
 export default function Navbar() {
   const navigate = useNavigate();
@@ -38,7 +37,7 @@ export default function Navbar() {
     <nav style={styles.nav}>
       {/* LEFT SIDE */}
       <div style={styles.leftSection}>
-        <Link to="/" style={styles.link}>Dashboard</Link>
+        <Link to="/admindashboard" style={styles.link}>Dashboard</Link>
         <Link to="/createNewUser" style={styles.link}>Create User</Link>
         <Link to="/createStore" style={styles.link}>Create Store</Link>
         <Link to="/storeList" style={styles.link}>Store List</Link>
@@ -73,7 +72,7 @@ const styles = {
   nav: {
     width: "100%",
     padding: "12px 30px",
-    background: "#1f1f1f",
+    background: "#493c3c",
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",

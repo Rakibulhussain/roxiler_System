@@ -2,9 +2,16 @@ const User = require("./user.model");
 const Store = require("./store.model");
 const Rating = require("./rating.model");
 
-// One owner can have many stores
+/*
+|--------------------------------------------------------------------------
+| USER ↔ STORE (Owner Relationship)
+|--------------------------------------------------------------------------
+*/
+
+// One owner (User) can have many stores
 User.hasMany(Store, {
   foreignKey: "ownerId",
+  as: "stores",
 });
 
 // One store belongs to one owner
@@ -13,18 +20,41 @@ Store.belongsTo(User, {
   as: "owner",
 });
 
-// Store has many ratings
+/*
+|--------------------------------------------------------------------------
+| STORE ↔ RATING
+|--------------------------------------------------------------------------
+*/
+
+// One store can have many ratings
 Store.hasMany(Rating, {
   foreignKey: "storeId",
+  as: "ratings",
 });
 
-// Rating belongs to store
+// Rating belongs to a store
 Rating.belongsTo(Store, {
   foreignKey: "storeId",
+  as: "store",
 });
-Store.belongsTo(User, { foreignKey: "ownerId" });
-Rating.belongsTo(Store, { foreignKey: "storeId" });
-Store.hasMany(Rating, { foreignKey: "storeId" });
+
+/*
+|--------------------------------------------------------------------------
+| USER ↔ RATING
+|--------------------------------------------------------------------------
+*/
+
+// One user can give many ratings
+User.hasMany(Rating, {
+  foreignKey: "userId",
+  as: "userRatings",
+});
+
+// Rating belongs to a user
+Rating.belongsTo(User, {
+  foreignKey: "userId",
+  as: "user",
+});
 
 module.exports = {
   User,

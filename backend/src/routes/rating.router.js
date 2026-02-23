@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 
 const ratingController = require("../controllers/rating.controller");
-const { verifyToken, isUser } = require("../middleware/auth.middleware");
+const { verifyToken, isUser,isOwner } = require("../middleware/auth.middleware");
 
 // ⭐ Only USER role can rate
 router.post(
@@ -17,5 +17,12 @@ router.get(
   "/average/:storeId",
   ratingController.getStoreAverageRating
 );
+
+
+
+router.get("/owner/stores",  verifyToken, isOwner, ratingController.getOwnerStores);
+
+
+
 
 module.exports = router;

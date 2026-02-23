@@ -20,5 +20,7 @@ router.get(
   storeController.getAllStoresWithDetails
 );
 
+router.get("/info/:storeId", storeController.getStoreInfo);
+
 
 module.exports = router;

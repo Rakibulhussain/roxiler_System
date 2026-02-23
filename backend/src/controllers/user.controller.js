@@ -179,3 +179,81 @@ exports.searchUsers = async (req, res) => {
     });
   }
 };
+
+
+// ==============================
+// 2️⃣ Get Single USER by ID
+// ==============================
+exports.getLoggedInUser = async (req, res) => {
+  try {
+    return res.status(200).json({
+      success: true,
+      data: {
+    
+        name: req.user.name,
+        email: req.user.email,
+        address: req.user.address,
+        role: req.user.role,
+      },
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Error fetching user",
+      error: error.message,
+    });
+  }
+};
+
+// ==============================
+// 3️⃣ Update Password (Only USER)
+// ==============================
+exports.changeMyPassword = async (req, res) => {
+  try {
+    const userId = req.user.id; // from verifyToken
+    const { oldPassword, newPassword } = req.body;
+
+    if (!oldPassword || !newPassword) {
+      return res.status(400).json({
+        success: false,
+        message: "Old and new password are required",
+      });
+    }
+
+    const user = await User.findByPk(userId);
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    const isMatch = await bcrypt.compare(oldPassword, user.password);
+
+    if (!isMatch) {
+      return res.status(400).json({
+        success: false,
+        message: "Old password is incorrect",
+      });
+    }
+
+    const salt = await bcrypt.genSalt(10);
+    user.password = await bcrypt.hash(newPassword, salt);
+    await user.save();
+
+    return res.status(200).json({
+      success: true,
+      message: "Password updated successfully",
+    });
+
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Password update failed",
+      error: error.message,
+    });
+  }
+};
+
+
